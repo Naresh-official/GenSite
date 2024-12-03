@@ -16,13 +16,13 @@ export const DEFAULT_BASE_PROMPT =
 export const getInitialPrompt = (techStack: string) => {
 	switch (techStack) {
 		case "html":
-			return `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${DEFAULT_HTML_PROMPT}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`;
+			return `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.Add additional files only if needed.feel free to import any new packages that may be required for the project.\n\n${DEFAULT_HTML_PROMPT}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`;
 		case "nodejs":
-			return `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${DEFAULT_NODEJS_PROMPT}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`;
+			return `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.Add additional files only if needed.feel free to import any new packages that may be required for the project.\n\n${DEFAULT_NODEJS_PROMPT}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`;
 		case "nextjs":
-			return `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${DEFAULT_NEXTJS_PROMPT}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`;
+			return `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.Add additional files only if needed.feel free to import any new packages that may be required for the project.\n\n${DEFAULT_NEXTJS_PROMPT}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`;
 		case "react":
-			return `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${DEFAULT_REACT_PROMPT}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`;
+			return `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.Add additional files only if needed.feel free to import any new packages that may be required for the project.\n\n${DEFAULT_REACT_PROMPT}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`;
 	}
 };
 

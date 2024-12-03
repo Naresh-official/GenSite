@@ -41,24 +41,11 @@ export async function POST(request: Request) {
 			);
 		}
 
-		if (techStack === "react") {
-			return NextResponse.json(
-				{
-					prompts: [
-						DEFAULT_BASE_PROMPT,
-						getInitialPrompt(techStack) as string,
-					],
-					filePrompts: [DEFAULT_REACT_PROMPT],
-				},
-				{ status: 200 }
-			);
-		}
-
 		return NextResponse.json(
 			{
 				prompts:
 					techStack === "nodejs"
-						? [DEFAULT_BASE_PROMPT]
+						? [getInitialPrompt(techStack) as string]
 						: [
 								DEFAULT_BASE_PROMPT,
 								getInitialPrompt(techStack) as string,
