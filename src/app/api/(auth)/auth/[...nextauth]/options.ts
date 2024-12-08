@@ -4,8 +4,6 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "../../../../../../prisma/utils/userHelpers";
-import { exit } from "process";
-import { escape } from "querystring";
 
 export const authOptions: NextAuthOptions = {
 	providers: [
@@ -126,6 +124,9 @@ export const authOptions: NextAuthOptions = {
 					console.log("error in signIn callback google : ", error);
 					return false;
 				}
+			}
+			if (account?.provider == "credentials") {
+				return true;
 			}
 			return false;
 		},
