@@ -12,6 +12,11 @@ enum Provider {
   GITHUB
 }
 
+enum Role {
+  USER
+  MODEL
+}
+
 model User {
   id            String         @id @default(uuid())
   email         String         @unique
@@ -35,5 +40,7 @@ model Message {
   id             String       @id @default(uuid())
   conversation   Conversation @relation(fields: [conversationId], references: [id])
   conversationId String
-  data           Json
+  role           Role
+  content        String
+  createdAt      DateTime     @default(now())
 }
