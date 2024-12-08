@@ -69,6 +69,12 @@ export async function GET(request: Request) {
 				conversation: true,
 			},
 		});
+		if (!user) {
+			return NextResponse.json(
+				{ error: "User not found" },
+				{ status: 404 }
+			);
+		}
 		const url = new URL(request.url);
 		const id = url.searchParams.get("id");
 		if (id) {
@@ -76,14 +82,14 @@ export async function GET(request: Request) {
 			const conversation = await prisma.conversation.findUnique({
 				where: {
 					id: id,
-        },
-        include: {
-          messages: {
-            orderBy: {
-              createdAt: "asc",
-            },
-          },
-        }
+				},
+				include: {
+					messages: {
+						orderBy: {
+							createdAt: "asc",
+						},
+					},
+				},
 			});
 			return NextResponse.json(conversation, { status: 200 });
 		} else {

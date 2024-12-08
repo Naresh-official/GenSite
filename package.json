@@ -8,10 +8,12 @@
 		"start": "next start",
 		"lint": "next lint"
 	},
-	"license": "UNLICENSED",
+	"license": "MIT",
 	"dependencies": {
 		"@google/generative-ai": "^0.21.0",
 		"@prisma/client": "^6.0.1",
+		"@radix-ui/react-scroll-area": "^1.2.1",
+		"@radix-ui/react-slot": "^1.1.0",
 		"axios": "^1.7.8",
 		"bcrypt": "^5.1.1",
 		"class-variance-authority": "^0.7.1",
