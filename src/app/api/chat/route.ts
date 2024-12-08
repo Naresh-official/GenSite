@@ -29,6 +29,7 @@ export async function POST(request: Request) {
 					for await (const chunk of result.stream) {
 						const chunkText = chunk.text();
 						// Encode the chunk and enqueue it to the stream
+						process.stdout.write(chunkText);
 						controller.enqueue(new TextEncoder().encode(chunkText));
 					}
 					controller.close(); // Close the stream when done
