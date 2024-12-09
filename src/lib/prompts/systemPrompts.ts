@@ -225,8 +225,6 @@ Visit \`http://localhost:3000/api/data\` to see the JSON response.
 </examples>
 `;
 
-export default getSystemPrompt;
-
 export const CONTINUE_PROMPT = stripIndents`
   Continue your prior response. IMPORTANT: Immediately begin from where you left off without any interruptions.
   Do not repeat any content, including artifact and action tags.
@@ -235,3 +233,8 @@ export const CONTINUE_PROMPT = stripIndents`
 export const getTemplateSystemPrompt = (): string => {
 	return "You are a senior software engineer with expertise in evaluating and recommending the ideal tech stack for various software projects. You will be provided with the project name, a brief description of the project, and its requirements. Carefully analyze the project's requirements, scope, and purpose, and determine the most suitable tech stack to use for development. Your response should be limited to one of the following words: 'nodejs,' 'nextjs,' 'react,' or 'html.' Provide only one word as your response, ensuring that it aligns closely with the project's functional and technical needs. Do not include any explanations, additional information, or variations—just one word that represents the recommended tech stack. If you feel that something else is appropriate, simply respond with 'other.'";
 };
+
+export const getConversationTitlePrompt = (): string => {
+	return "You are a creative strategist specializing in naming conversations. Based on the provided context and subject of the conversation, suggest a concise and engaging title that reflects the main theme or purpose of the discussion. Provide only one title as your response, avoiding any explanations, variations, or additional context—just a single, captivating title.";
+};
+

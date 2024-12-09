@@ -1,10 +1,12 @@
 import {
 	DEFAULT_BASE_PROMPT,
-	DEFAULT_REACT_PROMPT,
 	getFilePrompts,
 	getInitialPrompt,
 } from "@/lib/prompts/defaultPrompts";
-import { getTemplateSystemPrompt } from "@/lib/prompts/systemPrompts";
+import {
+	getConversationTitlePrompt,
+	getTemplateSystemPrompt,
+} from "@/lib/prompts/systemPrompts";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
@@ -14,11 +16,11 @@ export async function POST(request: Request) {
 		const genAI = new GoogleGenerativeAI(
 			process.env.GEMINI_API_KEY as string
 		);
-		const model = genAI.getGenerativeModel({
+		const templateModel = genAI.getGenerativeModel({
 			model: "gemini-1.5-flash",
 			systemInstruction: getTemplateSystemPrompt() as string,
 		});
-		const result = await model.generateContent(message);
+		const result = await templateModel.generateContent(message);
 
 		if (!result) {
 			return NextResponse.json(
@@ -41,6 +43,16 @@ export async function POST(request: Request) {
 			);
 		}
 
+		const titleModel = genAI.getGenerativeModel({
+			model: "gemini-1.5-flash",
+			systemInstruction: getConversationTitlePrompt() as string,
+		});
+		const titleResult = await titleModel.generateContent(
+			`tech stack:${techStack}\nproject description:${message}`
+		);
+		const title =
+			titleResult?.response?.candidates?.[0]?.content?.parts[0]?.text?.trim() ||
+			"";
 		return NextResponse.json(
 			{
 				prompts:
@@ -51,6 +63,7 @@ export async function POST(request: Request) {
 								getInitialPrompt(techStack) as string,
 						  ],
 				filePrompts: [getFilePrompts(techStack)],
+				title: title,
 			},
 			{
 				status: 200,
