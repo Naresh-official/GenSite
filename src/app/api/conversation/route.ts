@@ -5,7 +5,6 @@ import { uuidValidtor } from "@/schemas/conversationSchema";
 
 export async function POST(request: Request) {
 	try {
-		console.log("Entered conversation route");
 		const session = await getServerSession();
 		if (!session) {
 			return NextResponse.json(

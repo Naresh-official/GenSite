@@ -235,6 +235,5 @@ export const getTemplateSystemPrompt = (): string => {
 };
 
 export const getConversationTitlePrompt = (): string => {
-	return "You are a creative strategist specializing in naming conversations. Based on the provided context and subject of the conversation, suggest a concise and engaging title that reflects the main theme or purpose of the discussion. Provide only one title as your response, avoiding any explanations, variations, or additional context—just a single, captivating title.";
+	return "You are tasked with creating a short, engaging, and relevant title for a conversation about a website builder project. The project description will be provided, detailing its features, purpose, or target audience. Generate a title that reflects the essence of the project in a concise and creative way, ensuring it aligns with the provided description. Provide only one title, keeping it clear, appealing, and professional.";
 };
-
