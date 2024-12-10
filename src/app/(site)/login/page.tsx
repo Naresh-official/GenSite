@@ -42,17 +42,16 @@ export default function LoginPage() {
 			} else {
 				setError("Invalid email or password");
 			}
-		} catch (error: any) {
+		} catch (error: unknown) {
 			if (error instanceof ZodError) {
 				console.log(error.errors);
 				setError(error.errors[0].message);
+			} else if (error instanceof Error) {
+				console.log(error.message);
+				setError(error.message || "Something went wrong");
 			} else {
-				console.log(error);
-				setError(
-					error?.response?.data?.error ||
-						error.message ||
-						"Something went wrong"
-				);
+				console.log("Unknown error type", error);
+				setError("An unknown error occurred");
 			}
 		} finally {
 			setIsLoading(false);
@@ -68,13 +67,17 @@ export default function LoginPage() {
 			await signIn(provider, {
 				callbackUrl: "/",
 			});
-		} catch (error: any) {
-			console.log(error);
-			setError(
-				error?.response?.data?.error ||
-					error.message ||
-					"Something went wrong"
-			);
+		} catch (error: unknown) {
+			if (error instanceof ZodError) {
+				console.log(error.errors);
+				setError(error.errors[0].message);
+			} else if (error instanceof Error) {
+				console.log(error.message);
+				setError(error.message || "Something went wrong");
+			} else {
+				console.log("Unknown error type", error);
+				setError("An unknown error occurred");
+			}
 		} finally {
 			setIsLoading(false);
 		}

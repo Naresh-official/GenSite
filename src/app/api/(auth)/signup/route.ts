@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { signUpSchema } from "@/schemas/signUpSchema";
 import { NextResponse } from "next/server";
 import { hashPassword } from "../../../../../prisma/utils/userHelpers";
 

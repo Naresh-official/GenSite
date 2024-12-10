@@ -16,7 +16,7 @@ import { useSession, signIn } from "next-auth/react";
 export default function SignUpPage() {
 	const router = useRouter();
 
-	const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [error, setError] = useState<string | null>(null);
 	const [name, setName] = useState<string>("");
 	const [email, setEmail] = useState<string>("");
@@ -45,15 +45,21 @@ export default function SignUpPage() {
 				setPassword("");
 				router.push("/login");
 			}
-		} catch (error: any) {
+		} catch (error: unknown) {
 			if (error instanceof ZodError) {
+				console.log(error.errors);
 				setError(error.errors[0].message);
-			} else {
+			} else if (axios.isAxiosError(error)) {
+				console.log(error.response?.data);
 				setError(
-					error?.response?.data?.error ||
-						error.message ||
-						"Something went wrong"
+					error.response?.data?.error || "An HTTP error occurred"
 				);
+			} else if (error instanceof Error) {
+				console.log(error.message);
+				setError(error.message || "Something went wrong");
+			} else {
+				console.log("Unknown error type", error);
+				setError("An unknown error occurred");
 			}
 		} finally {
 			setIsLoading(false);
@@ -69,13 +75,22 @@ export default function SignUpPage() {
 			await signIn(provider, {
 				callbackUrl: "/",
 			});
-		} catch (error: any) {
-			console.log(error);
-			setError(
-				error?.response?.data?.error ||
-					error.message ||
-					"Something went wrong"
-			);
+		} catch (error: unknown) {
+			if (error instanceof ZodError) {
+				console.log(error.errors);
+				setError(error.errors[0].message);
+			} else if (axios.isAxiosError(error)) {
+				console.log(error.response?.data);
+				setError(
+					error.response?.data?.error || "An HTTP error occurred"
+				);
+			} else if (error instanceof Error) {
+				console.log(error.message);
+				setError(error.message || "Something went wrong");
+			} else {
+				console.log("Unknown error type", error);
+				setError("An unknown error occurred");
+			}
 		} finally {
 			setIsLoading(false);
 		}
