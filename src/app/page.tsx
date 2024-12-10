@@ -1,9 +1,11 @@
 import { MoveUpRight } from "lucide-react";
 import HomePageInput from "@/components/HomePageInput";
+import { Header } from "@/components/Header";
 
 export default function Home() {
 	return (
-		<div className="flex h-[90vh] w-screen flex-col">
+		<div className="flex h-screen w-screen flex-col">
+			<Header />
 			<main className="flex-1 flex justify-center items-center px-2 md:px-4">
 				<div className="flex  max-w-screen-2xl flex-col items-center justify-center py-20">
 					<h1 className="mb-10 text-center text-4xl font-bold">

@@ -97,7 +97,7 @@ export default function SignUpPage() {
 	};
 
 	return (
-		<div className="container flex flex-col h-[90vh] w-screen items-center justify-center">
+		<div className="container flex flex-col h-screen w-screen items-center justify-center">
 			<div className="mx-auto flex w-[90%] flex-col justify-center space-y-6 sm:w-[350px]">
 				<div className="flex flex-col space-y-2 text-center">
 					<h1 className="text-2xl font-semibold tracking-tight">

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { uuidValidtor } from "@/schemas/conversationSchema";
+import { ZodError } from "zod";
 
 export async function POST(request: Request) {
 	try {
@@ -12,7 +13,6 @@ export async function POST(request: Request) {
 				{ status: 401 }
 			);
 		}
-		const { title }: { title: string } = await request.json();
 		const user = await prisma.user.findUnique({
 			where: {
 				email: session?.user?.email as string,
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 		}
 		const conversation = await prisma.conversation.create({
 			data: {
-				title: title || "New conversation",
+				title: "New conversation",
 				userId: user?.id as string,
 			},
 		});
@@ -41,12 +41,26 @@ export async function POST(request: Request) {
 			);
 		}
 		return NextResponse.json(conversation, { status: 200 });
-	} catch (error: any) {
-		console.log("Error in conversation route : ", error);
-		return NextResponse.json(
-			{ error: error?.message || "Internal Server Error" },
-			{ status: 500 }
-		);
+	} catch (error: unknown) {
+		if (error instanceof ZodError) {
+			console.error("Validation Error: ", error.errors);
+			return NextResponse.json(
+				{ error: error.errors[0]?.message || "Validation error" },
+				{ status: 400 }
+			);
+		} else if (error instanceof Error) {
+			console.error("Server Error: ", error.message);
+			return NextResponse.json(
+				{ error: error.message || "Something went wrong" },
+				{ status: 500 }
+			);
+		} else {
+			console.error("Unknown Error: ", error);
+			return NextResponse.json(
+				{ error: "An unknown error occurred" },
+				{ status: 500 }
+			);
+		}
 	}
 }
 
@@ -95,8 +109,67 @@ export async function GET(request: Request) {
 			const conversations = user?.conversation;
 			return NextResponse.json(conversations, { status: 200 });
 		}
-	} catch (error: any) {
-		console.log("Error in conversation route : ", error.message);
-		return NextResponse.json({ error: error.message }, { status: 500 });
+	} catch (error: unknown) {
+		if (error instanceof ZodError) {
+			console.error("Validation Error: ", error.errors);
+			return NextResponse.json(
+				{ error: error.errors[0]?.message || "Validation error" },
+				{ status: 400 }
+			);
+		} else if (error instanceof Error) {
+			console.error("Server Error: ", error.message);
+			return NextResponse.json(
+				{ error: error.message || "Something went wrong" },
+				{ status: 500 }
+			);
+		} else {
+			console.error("Unknown Error: ", error);
+			return NextResponse.json(
+				{ error: "An unknown error occurred" },
+				{ status: 500 }
+			);
+		}
+	}
+}
+
+export async function PATCH(request: Request) {
+	try {
+		const { id, title }: { id: string; title: string } =
+			await request.json();
+		const conversation = await prisma.conversation.update({
+			where: {
+				id: id,
+			},
+			data: {
+				title: title,
+			},
+		});
+		if (!conversation) {
+			return NextResponse.json(
+				{ error: "Conversation not found" },
+				{ status: 404 }
+			);
+		}
+		return NextResponse.json(conversation, { status: 200 });
+	} catch (error: unknown) {
+		if (error instanceof ZodError) {
+			console.error("Validation Error: ", error.errors);
+			return NextResponse.json(
+				{ error: error.errors[0]?.message || "Validation error" },
+				{ status: 400 }
+			);
+		} else if (error instanceof Error) {
+			console.error("Server Error: ", error.message);
+			return NextResponse.json(
+				{ error: error.message || "Something went wrong" },
+				{ status: 500 }
+			);
+		} else {
+			console.error("Unknown Error: ", error);
+			return NextResponse.json(
+				{ error: "An unknown error occurred" },
+				{ status: 500 }
+			);
+		}
 	}
 }

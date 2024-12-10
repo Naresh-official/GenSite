@@ -4,6 +4,8 @@ import { getSystemPrompt } from "@/lib/prompts/systemPrompts";
 import { uuidValidtor } from "@/schemas/conversationSchema";
 import { prisma } from "@/lib/prisma";
 
+
+// TODO : Debug this route
 export async function POST(request: Request) {
 	try {
 		const { templatePrompts, prompt } = (await request.json()) as {
@@ -14,7 +16,7 @@ export async function POST(request: Request) {
 		const id = uuidValidtor.parse(
 			new URL(request.url).searchParams.get("id")
 		);
-
+    console.log("Entered chat route");
 		const conversation = await prisma.conversation.findUnique({
 			where: {
 				id: id,
@@ -34,7 +36,8 @@ export async function POST(request: Request) {
 			);
 		}
 
-		if (conversation?.messages.length === 0) {
+    if (conversation?.messages.length === 0) {
+      console.log("Conversation is empty");
 			templatePrompts.map(async (prompt) => {
 				await prisma.message.create({
 					data: {
@@ -45,7 +48,7 @@ export async function POST(request: Request) {
 				});
 			});
 		}
-
+    console.log("Conversation after prompts", conversation);
 		const genAI = new GoogleGenerativeAI(
 			process.env.GEMINI_API_KEY as string
 		);

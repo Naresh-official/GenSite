@@ -5,45 +5,40 @@ import { useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { setInput } from "@/store/features/inputSlice";
 
 function HomePageInput() {
 	const [loading, setLoading] = useState<boolean>(false);
-	const [filePrompts, setFilePrompts] = useState<string[]>([]);
-	const [prompts, setPrompts] = useState<string[]>([]);
-	const [title, setTitle] = useState<string>("");
 
-	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		const input = (
-			document.getElementById("inputMessage") as HTMLInputElement
-		).value;
+	const router = useRouter();
+	const dispatch = useDispatch();
+
+	const handleSubmit = async (event: React.FormEvent) => {
+		event.preventDefault();
 		try {
 			setLoading(true);
-			const { data } = await axios.post("/api/template", {
-				message: input,
-			});
-			setFilePrompts(data?.filePrompts as string[]);
-			setPrompts(data?.prompts as string[]);
-			setTitle(data?.title as string);
-			await handleCreateConversation(data?.title as string);
-		} catch (error) {
-			console.error(error);
-		} finally {
-			(
+			const inputMessage = (
 				document.getElementById("inputMessage") as HTMLInputElement
-			).value = "";
-			setLoading(false);
-		}
-	};
-
-	const handleCreateConversation = async (title: string) => {
-		try {
-			setLoading(true);
-			const { data } = await axios.post("/api/conversation", {
-				title,
-			});
-		} catch (error) {
-			console.error(error);
+			).value;
+			if (!inputMessage) {
+				throw new Error("Please enter a message");
+			}
+			localStorage.setItem("inputMessage", inputMessage);
+			dispatch(setInput(inputMessage));
+			const { data } = await axios.post("/api/conversation");
+			if (data?.id) {
+				router.push(`/chat/${data.id}`);
+			}
+		} catch (error: unknown) {
+			if (axios.isAxiosError(error)) {
+				console.log(error?.response?.data?.error);
+			} else if (error instanceof Error) {
+				console.error(error?.message);
+			} else {
+				console.error(error);
+			}
 		} finally {
 			setLoading(false);
 		}

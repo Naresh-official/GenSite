@@ -2,8 +2,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getServerSession } from "next-auth";
 
-export async function Header() {
-	const session = await getServerSession();
+export function Header() {
+	const session = getServerSession().then((res) => res);
 	return (
 		<header className="w-screen p-2 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
 			<div className="container flex h-14 max-w-screen-2xl items-center">

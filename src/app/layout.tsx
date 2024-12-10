@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "../context/AuthProvider";
-import { Header } from "@/components/Header";
+import StoreProvider from "@/context/StoreProvider";
 
 const poppins = Poppins({
 	subsets: ["latin"],
@@ -21,14 +21,15 @@ export default function RootLayout({
 }>) {
 	return (
 		<AuthProvider>
-			<html lang="en">
-				<body
-					className={`min-h-screen w-screen bg-background text-foreground dark ${poppins.className} antialiased`}
-				>
-					<Header />
-					{children}
-				</body>
-			</html>
+			<StoreProvider>
+				<html lang="en">
+					<body
+						className={`min-h-screen w-screen bg-background text-foreground dark ${poppins.className} antialiased`}
+					>
+						{children}
+					</body>
+				</html>
+			</StoreProvider>
 		</AuthProvider>
 	);
 }
