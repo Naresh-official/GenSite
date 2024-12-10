@@ -5,7 +5,7 @@ import { hashPassword } from "../../../../../prisma/utils/userHelpers";
 
 export async function POST(request: Request) {
 	try {
-		const signUpData = signUpSchema.parse(await request.json());
+		const signUpData = await request.json();
 		const existingUser = await prisma.user.findUnique({
 			where: {
 				email: signUpData.email,
@@ -37,7 +37,14 @@ export async function POST(request: Request) {
 		if (!newUser) {
 			throw new Error("Unable to create user");
 		}
-		return NextResponse.json(newUser, { status: 200 });
+		const displayUser = {
+			id: newUser.id,
+			name: newUser.name,
+			email: newUser.email,
+			isSocialLogin: newUser.isSocialLogin,
+			provider: newUser.provider,
+		};
+		return NextResponse.json(displayUser, { status: 200 });
 	} catch (error: any) {
 		return NextResponse.json({ error: error.message }, { status: 500 });
 	}

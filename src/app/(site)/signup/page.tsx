@@ -7,21 +7,83 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
 import Image from "next/image";
+import { signUpSchema } from "@/schemas/signUpSchema";
+import { ZodError } from "zod";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useSession, signIn } from "next-auth/react";
 
 export default function SignUpPage() {
-	const [isLoading, setIsLoading] = useState(false);
+	const router = useRouter();
 
-	const onSubmit = async (event: React.FormEvent) => {
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const [name, setName] = useState<string>("");
+	const [email, setEmail] = useState<string>("");
+	const [password, setPassword] = useState<string>("");
+	const { data: sessionData } = useSession();
+
+	const handleCredentialSignUp = async (event: React.FormEvent) => {
 		event.preventDefault();
 		setIsLoading(true);
-		// Simulate API call
-		await new Promise((resolve) => setTimeout(resolve, 2000));
-		setIsLoading(false);
+		try {
+			if (sessionData && sessionData.user) {
+				throw new Error("You are already signed in. Please sign out.");
+			}
+			const formdata = {
+				name,
+				email,
+				password,
+			};
+			signUpSchema.parse(formdata);
+			const { data } = await axios.post("/api/signup", formdata);
+			if (data?.id) {
+				setError(null);
+				setIsLoading(false);
+				setName("");
+				setEmail("");
+				setPassword("");
+				router.push("/login");
+			}
+		} catch (error: any) {
+			if (error instanceof ZodError) {
+				setError(error.errors[0].message);
+			} else {
+				setError(
+					error?.response?.data?.error ||
+						error.message ||
+						"Something went wrong"
+				);
+			}
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
+	const handleSocialSignIn = async (provider: string) => {
+		setIsLoading(true);
+		try {
+			if (sessionData && sessionData.user) {
+				throw new Error("You are already signed in. Please sign out.");
+			}
+			await signIn(provider, {
+				callbackUrl: "/",
+			});
+		} catch (error: any) {
+			console.log(error);
+			setError(
+				error?.response?.data?.error ||
+					error.message ||
+					"Something went wrong"
+			);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	return (
-		<div className="container flex h-screen w-screen flex-col items-center justify-center">
-			<div className="mx-auto flex w-[90%] md:w-full flex-col justify-center space-y-6 sm:w-[350px]">
+		<div className="container flex flex-col h-[90vh] w-screen items-center justify-center">
+			<div className="mx-auto flex w-[90%] flex-col justify-center space-y-6 sm:w-[350px]">
 				<div className="flex flex-col space-y-2 text-center">
 					<h1 className="text-2xl font-semibold tracking-tight">
 						Create an account
@@ -31,7 +93,7 @@ export default function SignUpPage() {
 					</p>
 				</div>
 				<div className="grid gap-6">
-					<form onSubmit={onSubmit}>
+					<form onSubmit={handleCredentialSignUp}>
 						<div className="grid gap-2">
 							<div className="grid gap-1">
 								<Label className="sr-only" htmlFor="name">
@@ -45,6 +107,8 @@ export default function SignUpPage() {
 									autoComplete="name"
 									autoCorrect="off"
 									disabled={isLoading}
+									value={name}
+									onChange={(e) => setName(e.target.value)}
 								/>
 							</div>
 							<div className="grid gap-1">
@@ -59,6 +123,8 @@ export default function SignUpPage() {
 									autoComplete="email"
 									autoCorrect="off"
 									disabled={isLoading}
+									value={email}
+									onChange={(e) => setEmail(e.target.value)}
 								/>
 							</div>
 							<div className="grid gap-1">
@@ -72,6 +138,10 @@ export default function SignUpPage() {
 									autoCapitalize="none"
 									autoCorrect="off"
 									disabled={isLoading}
+									value={password}
+									onChange={(e) =>
+										setPassword(e.target.value)
+									}
 								/>
 							</div>
 							<Button disabled={isLoading}>
@@ -82,6 +152,11 @@ export default function SignUpPage() {
 							</Button>
 						</div>
 					</form>
+					{error && (
+						<div className="text-red-600 text-sm bg-yellow-900/20 p-3 text-center border-2 border-red-600 rounded-xl">
+							{error}
+						</div>
+					)}
 					<div className="relative">
 						<div className="absolute inset-0 flex items-center">
 							<span className="w-full border-t" />
@@ -93,7 +168,11 @@ export default function SignUpPage() {
 						</div>
 					</div>
 					<div className="grid grid-cols-2 gap-4">
-						<Button variant="outline" disabled={isLoading}>
+						<Button
+							variant="outline"
+							disabled={isLoading}
+							onClick={() => handleSocialSignIn("google")}
+						>
 							<Image
 								src="/google.svg"
 								alt="Google"
@@ -102,7 +181,11 @@ export default function SignUpPage() {
 							/>
 							Google
 						</Button>
-						<Button variant="outline" disabled={isLoading}>
+						<Button
+							variant="outline"
+							disabled={isLoading}
+							onClick={() => handleSocialSignIn("github")}
+						>
 							<Image
 								src="/github.svg"
 								alt="GitHub"
