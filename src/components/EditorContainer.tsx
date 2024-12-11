@@ -8,7 +8,7 @@ import {
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
 
-function Container() {
+function EditorContainer() {
 	const sampleFiles = [
 		{
 			name: "src",
@@ -84,4 +84,4 @@ function Container() {
 	);
 }
 
-export default Container;
+export default EditorContainer;

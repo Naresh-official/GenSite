@@ -6,12 +6,13 @@ import {
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import Container from "./Container";
 import { useSelector } from "react-redux";
 import ChatInput from "./ChatInput";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { handleError } from "@/lib/ErrorHandler";
+import MessageContainer from "./MessageContainer";
+import EditorContainer from "./EditorContainer";
 
 export function Chat() {
 	const { chatId } = useParams();
@@ -28,13 +29,24 @@ export function Chat() {
 		}[]
 	>([]);
 
+	const containerRef = useRef<HTMLDivElement>(null);
+
+	// Function to scroll the container to the bottom
+	const scrollToBottom = () => {
+		if (containerRef.current) {
+			containerRef.current.scrollTo({
+				top: containerRef.current.scrollHeight,
+				behavior: "smooth",
+			});
+		}
+	};
+
 	const didRun = useRef(false);
 	useEffect(() => {
 		if (didRun.current) return; // Prevent duplicate execution
 		didRun.current = true;
 		const fetchData = async () => {
 			const fetchedMessages = await getAllMessages();
-			console.log(fetchedMessages);
 			if (fetchedMessages.length === 0) {
 				await getTemplate();
 			}
@@ -83,18 +95,26 @@ export function Chat() {
 		<div className="bg-zinc-800 p-1 h-screen">
 			<ResizablePanelGroup direction="horizontal" className="gap-[2px]">
 				<ResizablePanel defaultSize={50} minSize={40}>
-					<div className="flex h-full rounded-2xl flex-col bg-background">
-						<div className="flex-1 p-3 overflow-y-auto">
-							show messages
-						</div>
+					<div className="flex h-full rounded-2xl flex-col bg-background overflow-hidden">
+						<MessageContainer
+							ref={containerRef}
+							messages={messages}
+							setMessages={setMessages}
+							scrollToBottom={scrollToBottom}
+						/>
 						<div className="border-t p-4">
-							<ChatInput loading={loading} />
+							<ChatInput
+								loading={loading}
+								setLoading={setLoading}
+								setMessages={setMessages}
+								scrollToBottom={scrollToBottom}
+							/>
 						</div>
 					</div>
 				</ResizablePanel>
 				<ResizableHandle withHandle />
 				<ResizablePanel defaultSize={50} minSize={40}>
-					<Container />
+					<EditorContainer />
 				</ResizablePanel>
 			</ResizablePanelGroup>
 		</div>

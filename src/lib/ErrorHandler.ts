@@ -9,10 +9,10 @@ export const handleError = (error: unknown) => {
 		console.log(error?.response?.data?.error);
 		return error?.response?.data?.error;
 	} else if (error instanceof Error) {
-		console.error(error?.message);
+		console.log(error?.message);
 		return error?.message;
 	} else {
-		console.error(error);
+		console.log(error);
 		return error;
 	}
 };
