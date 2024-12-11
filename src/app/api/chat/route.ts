@@ -3,9 +3,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getSystemPrompt } from "@/lib/prompts/systemPrompts";
 import { uuidValidtor } from "@/schemas/conversationSchema";
 import { prisma } from "@/lib/prisma";
+import { handleError } from "@/lib/ErrorHandler";
 
-
-// TODO : Debug this route
 export async function POST(request: Request) {
 	try {
 		const { templatePrompts, prompt } = (await request.json()) as {
@@ -16,8 +15,7 @@ export async function POST(request: Request) {
 		const id = uuidValidtor.parse(
 			new URL(request.url).searchParams.get("id")
 		);
-    console.log("Entered chat route");
-		const conversation = await prisma.conversation.findUnique({
+		let conversation = await prisma.conversation.findUnique({
 			where: {
 				id: id,
 			},
@@ -36,8 +34,7 @@ export async function POST(request: Request) {
 			);
 		}
 
-    if (conversation?.messages.length === 0) {
-      console.log("Conversation is empty");
+		if (conversation?.messages.length === 0) {
 			templatePrompts.map(async (prompt) => {
 				await prisma.message.create({
 					data: {
@@ -48,7 +45,18 @@ export async function POST(request: Request) {
 				});
 			});
 		}
-    console.log("Conversation after prompts", conversation);
+		conversation = await prisma.conversation.findUnique({
+			where: {
+				id: id,
+			},
+			include: {
+				messages: {
+					orderBy: {
+						createdAt: "asc",
+					},
+				},
+			},
+		});
 		const genAI = new GoogleGenerativeAI(
 			process.env.GEMINI_API_KEY as string
 		);
@@ -83,12 +91,10 @@ export async function POST(request: Request) {
 					for await (const chunk of result.stream) {
 						const chunkText = chunk.text();
 						// Encode the chunk and enqueue it to the stream
-						process.stdout.write(chunkText);
 						controller.enqueue(new TextEncoder().encode(chunkText));
 						response = response + chunkText;
 					}
 					controller.close(); // Close the stream when done
-					console.log("\n\n\nresponse : ", response);
 					await prisma.message.create({
 						data: {
 							content: response,
@@ -109,9 +115,9 @@ export async function POST(request: Request) {
 			},
 		});
 	} catch (error: any) {
-		console.error(error);
+		const err = handleError(error);
 		return NextResponse.json(
-			{ error: error?.message || "Internal Server Error" },
+			{ error: err || "Internal Server Error" },
 			{ status: 500 }
 		);
 	}

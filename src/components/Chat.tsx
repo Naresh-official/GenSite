@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	ResizableHandle,
 	ResizablePanel,
@@ -10,8 +10,8 @@ import Container from "./Container";
 import { useSelector } from "react-redux";
 import ChatInput from "./ChatInput";
 import axios from "axios";
-import { title } from "process";
 import { useParams } from "next/navigation";
+import { handleError } from "@/lib/ErrorHandler";
 
 export function Chat() {
 	const { chatId } = useParams();
@@ -28,12 +28,19 @@ export function Chat() {
 		}[]
 	>([]);
 
+	const didRun = useRef(false);
 	useEffect(() => {
-		getAllMessages().then(() => {
-			if (messages.length === 0) {
-				getTemplate();
+		if (didRun.current) return; // Prevent duplicate execution
+		didRun.current = true;
+		const fetchData = async () => {
+			const fetchedMessages = await getAllMessages();
+			console.log(fetchedMessages);
+			if (fetchedMessages.length === 0) {
+				await getTemplate();
 			}
-		});
+		};
+
+		fetchData();
 	}, []);
 
 	const getTemplate = async () => {
@@ -55,13 +62,7 @@ export function Chat() {
 			]);
 			setFilePrompts(data.filePrompts);
 		} catch (error: unknown) {
-			if (axios.isAxiosError(error)) {
-				console.log(error?.response?.data?.error);
-			} else if (error instanceof Error) {
-				console.error(error?.message);
-			} else {
-				console.error(error);
-			}
+			handleError(error);
 		} finally {
 			setLoading(false);
 		}
@@ -71,14 +72,10 @@ export function Chat() {
 		try {
 			const { data } = await axios.get(`/api/conversation?id=${chatId}`);
 			setMessages(data?.messages);
+			return data?.messages || [];
 		} catch (error: unknown) {
-			if (axios.isAxiosError(error)) {
-				console.log(error?.response?.data?.error);
-			} else if (error instanceof Error) {
-				console.error(error?.message);
-			} else {
-				console.error(error);
-			}
+			handleError(error);
+			return [];
 		}
 	};
 

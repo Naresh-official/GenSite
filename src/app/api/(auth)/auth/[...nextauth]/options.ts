@@ -49,7 +49,7 @@ export const authOptions: NextAuthOptions = {
 						return null;
 					}
 					return user;
-				} catch (error: any) {
+				} catch (error: unknown) {
 					console.log("error in authorize : ", error);
 					return null;
 				}
@@ -88,7 +88,7 @@ export const authOptions: NextAuthOptions = {
 							return false;
 						}
 					}
-				} catch (error: any) {
+				} catch (error: unknown) {
 					console.log("error in signIn callback github : ", error);
 					return false;
 				}
@@ -119,7 +119,7 @@ export const authOptions: NextAuthOptions = {
 							return false;
 						}
 					}
-				} catch (error: any) {
+				} catch (error: unknown) {
 					console.log("error in signIn callback google : ", error);
 					return false;
 				}

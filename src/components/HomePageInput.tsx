@@ -8,6 +8,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setInput } from "@/store/features/inputSlice";
+import { handleError } from "@/lib/ErrorHandler";
 
 function HomePageInput() {
 	const [loading, setLoading] = useState<boolean>(false);
@@ -25,20 +26,16 @@ function HomePageInput() {
 			if (!inputMessage) {
 				throw new Error("Please enter a message");
 			}
-			localStorage.setItem("inputMessage", inputMessage);
 			dispatch(setInput(inputMessage));
 			const { data } = await axios.post("/api/conversation");
+			(
+				document.getElementById("inputMessage") as HTMLInputElement
+			).value = "";
 			if (data?.id) {
 				router.push(`/chat/${data.id}`);
 			}
 		} catch (error: unknown) {
-			if (axios.isAxiosError(error)) {
-				console.log(error?.response?.data?.error);
-			} else if (error instanceof Error) {
-				console.error(error?.message);
-			} else {
-				console.error(error);
-			}
+			handleError(error);
 		} finally {
 			setLoading(false);
 		}

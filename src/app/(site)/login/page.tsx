@@ -11,6 +11,7 @@ import { signIn, useSession } from "next-auth/react";
 import { ZodError } from "zod";
 import { signInSchema } from "@/schemas/signInSchema";
 import { useRouter } from "next/navigation";
+import { handleError } from "@/lib/ErrorHandler";
 
 export default function LoginPage() {
 	const [isLoading, setIsLoading] = useState(false);
@@ -43,16 +44,7 @@ export default function LoginPage() {
 				setError("Invalid email or password");
 			}
 		} catch (error: unknown) {
-			if (error instanceof ZodError) {
-				console.log(error.errors);
-				setError(error.errors[0].message);
-			} else if (error instanceof Error) {
-				console.log(error.message);
-				setError(error.message || "Something went wrong");
-			} else {
-				console.log("Unknown error type", error);
-				setError("An unknown error occurred");
-			}
+			setError(handleError(error));
 		} finally {
 			setIsLoading(false);
 		}
@@ -68,16 +60,7 @@ export default function LoginPage() {
 				callbackUrl: "/",
 			});
 		} catch (error: unknown) {
-			if (error instanceof ZodError) {
-				console.log(error.errors);
-				setError(error.errors[0].message);
-			} else if (error instanceof Error) {
-				console.log(error.message);
-				setError(error.message || "Something went wrong");
-			} else {
-				console.log("Unknown error type", error);
-				setError("An unknown error occurred");
-			}
+			setError(handleError(error));
 		} finally {
 			setIsLoading(false);
 		}

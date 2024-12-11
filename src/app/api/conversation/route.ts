@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { uuidValidtor } from "@/schemas/conversationSchema";
 import { ZodError } from "zod";
+import { handleError } from "@/lib/ErrorHandler";
 
 export async function POST(request: Request) {
 	try {
@@ -42,25 +43,8 @@ export async function POST(request: Request) {
 		}
 		return NextResponse.json(conversation, { status: 200 });
 	} catch (error: unknown) {
-		if (error instanceof ZodError) {
-			console.error("Validation Error: ", error.errors);
-			return NextResponse.json(
-				{ error: error.errors[0]?.message || "Validation error" },
-				{ status: 400 }
-			);
-		} else if (error instanceof Error) {
-			console.error("Server Error: ", error.message);
-			return NextResponse.json(
-				{ error: error.message || "Something went wrong" },
-				{ status: 500 }
-			);
-		} else {
-			console.error("Unknown Error: ", error);
-			return NextResponse.json(
-				{ error: "An unknown error occurred" },
-				{ status: 500 }
-			);
-		}
+		const err = handleError(error);
+		return NextResponse.json({ error: err }, { status: 500 });
 	}
 }
 
@@ -110,25 +94,8 @@ export async function GET(request: Request) {
 			return NextResponse.json(conversations, { status: 200 });
 		}
 	} catch (error: unknown) {
-		if (error instanceof ZodError) {
-			console.error("Validation Error: ", error.errors);
-			return NextResponse.json(
-				{ error: error.errors[0]?.message || "Validation error" },
-				{ status: 400 }
-			);
-		} else if (error instanceof Error) {
-			console.error("Server Error: ", error.message);
-			return NextResponse.json(
-				{ error: error.message || "Something went wrong" },
-				{ status: 500 }
-			);
-		} else {
-			console.error("Unknown Error: ", error);
-			return NextResponse.json(
-				{ error: "An unknown error occurred" },
-				{ status: 500 }
-			);
-		}
+		const err = handleError(error);
+		return NextResponse.json({ error: err }, { status: 500 });
 	}
 }
 
@@ -152,24 +119,7 @@ export async function PATCH(request: Request) {
 		}
 		return NextResponse.json(conversation, { status: 200 });
 	} catch (error: unknown) {
-		if (error instanceof ZodError) {
-			console.error("Validation Error: ", error.errors);
-			return NextResponse.json(
-				{ error: error.errors[0]?.message || "Validation error" },
-				{ status: 400 }
-			);
-		} else if (error instanceof Error) {
-			console.error("Server Error: ", error.message);
-			return NextResponse.json(
-				{ error: error.message || "Something went wrong" },
-				{ status: 500 }
-			);
-		} else {
-			console.error("Unknown Error: ", error);
-			return NextResponse.json(
-				{ error: "An unknown error occurred" },
-				{ status: 500 }
-			);
-		}
+		const err = handleError(error);
+		return NextResponse.json({ error: err }, { status: 500 });
 	}
 }

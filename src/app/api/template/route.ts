@@ -1,3 +1,4 @@
+import { handleError } from "@/lib/ErrorHandler";
 import {
 	DEFAULT_BASE_PROMPT,
 	getFilePrompts,
@@ -69,7 +70,8 @@ export async function POST(request: Request) {
 				status: 200,
 			}
 		);
-	} catch (error: any) {
-		return NextResponse.json(error.message, { status: 500 });
+	} catch (error: unknown) {
+		const err = handleError(error);
+		return NextResponse.json({ error: err }, { status: 500 });
 	}
 }

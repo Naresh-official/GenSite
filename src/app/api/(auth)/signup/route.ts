@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { hashPassword } from "../../../../../prisma/utils/userHelpers";
+import { handleError } from "@/lib/ErrorHandler";
 
 export async function POST(request: Request) {
 	try {
@@ -44,7 +45,8 @@ export async function POST(request: Request) {
 			provider: newUser.provider,
 		};
 		return NextResponse.json(displayUser, { status: 200 });
-	} catch (error: any) {
-		return NextResponse.json({ error: error.message }, { status: 500 });
+	} catch (error: unknown) {
+		const err = handleError(error);
+		return NextResponse.json({ error: err }, { status: 500 });
 	}
 }

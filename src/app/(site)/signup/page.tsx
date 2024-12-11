@@ -12,6 +12,7 @@ import { ZodError } from "zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
+import { handleError } from "@/lib/ErrorHandler";
 
 export default function SignUpPage() {
 	const router = useRouter();
@@ -46,21 +47,7 @@ export default function SignUpPage() {
 				router.push("/login");
 			}
 		} catch (error: unknown) {
-			if (error instanceof ZodError) {
-				console.log(error.errors);
-				setError(error.errors[0].message);
-			} else if (axios.isAxiosError(error)) {
-				console.log(error.response?.data);
-				setError(
-					error.response?.data?.error || "An HTTP error occurred"
-				);
-			} else if (error instanceof Error) {
-				console.log(error.message);
-				setError(error.message || "Something went wrong");
-			} else {
-				console.log("Unknown error type", error);
-				setError("An unknown error occurred");
-			}
+			setError(handleError(error));
 		} finally {
 			setIsLoading(false);
 		}
@@ -76,21 +63,7 @@ export default function SignUpPage() {
 				callbackUrl: "/",
 			});
 		} catch (error: unknown) {
-			if (error instanceof ZodError) {
-				console.log(error.errors);
-				setError(error.errors[0].message);
-			} else if (axios.isAxiosError(error)) {
-				console.log(error.response?.data);
-				setError(
-					error.response?.data?.error || "An HTTP error occurred"
-				);
-			} else if (error instanceof Error) {
-				console.log(error.message);
-				setError(error.message || "Something went wrong");
-			} else {
-				console.log("Unknown error type", error);
-				setError("An unknown error occurred");
-			}
+			setError(handleError(error));
 		} finally {
 			setIsLoading(false);
 		}
