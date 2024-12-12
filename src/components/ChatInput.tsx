@@ -35,7 +35,7 @@ function ChatInput({
 		event.preventDefault();
 		setLoading(true);
 		try {
-			if (inputPrompt === "") {
+			if (inputPrompt === "" || !inputPrompt || loading) {
 				throw new Error("Please enter a message");
 			}
 			setMessages((messages) => [

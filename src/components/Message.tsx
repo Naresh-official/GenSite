@@ -12,7 +12,6 @@ function Message({
 }) {
 	return (
 		<div
-			key={message.id}
 			className={`p-4 rounded-xl text-sm ${
 				message.role === "USER"
 					? "w-[70%] self-end bg-zinc-900"
@@ -24,7 +23,9 @@ function Message({
 					{message.role === "USER" ? "You" : "GenSite"}
 				</span>
 			</div>
-			<div className="mt-2">{message.content}</div>
+			<div id={message.id} className="mt-2">
+				{message.content}
+			</div>
 		</div>
 	);
 }
