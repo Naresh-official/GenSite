@@ -48,6 +48,27 @@ export function Chat() {
 		const fetchData = async () => {
 			const fetchedMessages = await getAllMessages();
 			if (fetchedMessages.length === 0) {
+				setMessages([
+					// first two messages are ignored because they are system messages
+					{
+						id: crypto.randomUUID() as string,
+						content: inputMessage,
+						role: "USER",
+						createdAt: new Date().toISOString(),
+					},
+					{
+						id: crypto.randomUUID() as string,
+						content: "Hello! How can I help you today?",
+						role: "MODEL",
+						createdAt: new Date().toISOString(),
+					},
+					{
+						id: crypto.randomUUID() as string,
+						content: inputMessage as string,
+						role: "USER",
+						createdAt: new Date().toISOString(),
+					},
+				]);
 				await getTemplate();
 			}
 		};
@@ -72,6 +93,7 @@ export function Chat() {
 					prompt: inputMessage,
 				}),
 			]);
+			getAllMessages();
 			setFilePrompts(data.filePrompts);
 		} catch (error: unknown) {
 			handleError(error);

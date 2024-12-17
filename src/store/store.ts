@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import inputReducer from "./features/inputSlice";
+import filesReducer from "./features/filesSlice";
 
 export const store = configureStore({
-  reducer: {
-    input: inputReducer,
-  },
+	reducer: {
+		input: inputReducer,
+		files: filesReducer,
+	},
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

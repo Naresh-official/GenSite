@@ -51,6 +51,9 @@ function ChatInput({
 			const { data } = await axios.post(`/api/chat?id=${chatId}`, {
 				prompt: inputPrompt,
 			});
+			navigator.clipboard.writeText(data as string).then(() => {
+				console.log("Copied to clipboard");
+			});
 			setMessages((messages) => [
 				...messages,
 				{
@@ -61,6 +64,7 @@ function ChatInput({
 				},
 			]);
 			scrollToBottom();
+			setInputPrompt("");
 		} catch (error: unknown) {
 			handleError(error);
 		} finally {

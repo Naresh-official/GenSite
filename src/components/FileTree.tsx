@@ -57,7 +57,7 @@ function TreeNode({ nodes, level, onSelectFile }: TreeNodeProps) {
 							"flex items-center gap-2 px-2 py-1 hover:bg-muted/50",
 							node.type === "file" && "cursor-pointer"
 						)}
-						style={{ paddingLeft: `${level * 12 + 8}px` }}
+						style={{ paddingLeft: `${level * 32 + 8}px` }}
 						onClick={() => {
 							if (node.type === "folder") {
 								toggleFolder(node.name);

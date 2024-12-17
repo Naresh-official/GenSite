@@ -7,34 +7,10 @@ import {
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { useSelector } from "react-redux";
 
 function EditorContainer() {
-	const sampleFiles = [
-		{
-			name: "src",
-			type: "folder" as const,
-			children: [
-				{
-					name: "components",
-					type: "folder" as const,
-					children: [
-						{
-							name: "button.tsx",
-							type: "file" as const,
-							content:
-								"export function Button() { return <button>Click me</button> }",
-						},
-					],
-				},
-				{
-					name: "app.tsx",
-					type: "file" as const,
-					content:
-						"export default function App() { return <div>Hello World</div> }",
-				},
-			],
-		},
-	];
+	const files = useSelector((state: any) => state.files.files);
 	const [selectedFiles, setSelectedFiles] = React.useState<
 		Array<{
 			name: string;
@@ -61,7 +37,7 @@ function EditorContainer() {
 					<div className="h-full border-r">
 						<div className="p-4 font-medium">Files</div>
 						<FileTree
-							data={sampleFiles}
+							data={files}
 							onSelectFile={handleFileSelect}
 						/>
 					</div>
