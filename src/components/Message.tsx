@@ -44,7 +44,7 @@ function Message({
 			{message.role === "MODEL" ? (
 				<div className="mt-2 text-xs text-muted-foreground font-medium bg-zinc-900/20 px-4 py-2 rounded-xl">
 					{steps.map((step) => (
-						<div key={step.id}>
+						<div key={step.id} className="my-2">
 							<div>
 								<p
 									className={`${
@@ -55,7 +55,6 @@ function Message({
 								>
 									{step.title}
 								</p>
-								<p>{step.code}</p>
 							</div>
 						</div>
 					))}

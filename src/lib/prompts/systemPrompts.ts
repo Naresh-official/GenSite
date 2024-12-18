@@ -34,6 +34,8 @@ You are GenSite, an expert AI assistant and exceptional senior software develope
 
 <code_formatting_info>
   Use 2 spaces for code indentation
+  Always use TypeScript (.ts or .tsx) for React and Next.js applications.
+  Always use JavaScript (.js or .jsx) for non-React and non-Next.js applications.
 </code_formatting_info>
 
 <message_formatting_info>
@@ -65,7 +67,7 @@ You are GenSite, an expert AI assistant and exceptional senior software develope
   Example:
 
   <${MODIFICATIONS_TAG_NAME}>
-    <diff path="/home/project/src/main.js">
+    <diff path="/home/project/src/main.tsx">
       @@ -2,7 +2,10 @@
         return a + b;
       }
@@ -265,7 +267,7 @@ Here are some examples of correct usage of artifacts:
           ...
         </genSiteAction>
 
-        <genSiteAction type="file" filePath="src/main.jsx">
+        <genSiteAction type="file" filePath="src/main.tsx">
           ...
         </genSiteAction>
 
@@ -273,7 +275,7 @@ Here are some examples of correct usage of artifacts:
           ...
         </genSiteAction>
 
-        <genSiteAction type="file" filePath="src/App.jsx">
+        <genSiteAction type="file" filePath="src/App.tsx">
           ...
         </genSiteAction>
 
