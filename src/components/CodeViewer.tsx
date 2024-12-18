@@ -1,6 +1,8 @@
 "use client";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect, useRef } from "react";
+import Prism from "prismjs";
+import "prismjs/themes/prism.css";
 
 interface CodeViewerProps {
 	files: {
@@ -11,30 +13,23 @@ interface CodeViewerProps {
 }
 
 export function CodeViewer({ files }: CodeViewerProps) {
+	const codeRef = useRef(null);
+	const codeString = files[0].content;
+
+	useEffect(() => {
+		if (codeRef.current) {
+			Prism.highlightElement(codeRef.current);
+		}
+	}, [codeString]);
 	return (
-		<Tabs defaultValue={files[0]?.name} className="w-full h-full">
-			<TabsList className="w-full justify-start">
-				{files.map((file) => (
-					<TabsTrigger
-						key={file.name}
-						value={file.name}
-						className="text-xs"
-					>
-						{file.name}
-					</TabsTrigger>
-				))}
-			</TabsList>
-			{files.map((file) => (
-				<TabsContent
-					key={file.name}
-					value={file.name}
-					className="mt-0 border-t p-4"
-				>
-					<pre className="overflow-auto text-sm">
-						<code>{file.content}</code>
-					</pre>
-				</TabsContent>
-			))}
-		</Tabs>
+		<div className="h-[93%]">
+			<pre
+				className={`overflow-auto text-sm text-white h-full language-${files[0].language}`}
+			>
+				<code ref={codeRef} style={{ color: "white" }}>
+					{codeString}
+				</code>
+			</pre>
+		</div>
 	);
 }

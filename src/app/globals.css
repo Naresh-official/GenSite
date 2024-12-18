@@ -74,3 +74,14 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+pre[class*="language-"] {
+	@apply bg-neutral-950 !important;
+	padding: 1rem;
+	color: white !important;
+}
+
+code[class*="language-"] {
+	text-shadow: none !important; /* Disable shadows */
+	color: white !important; /* Ensure text is white */
+}
