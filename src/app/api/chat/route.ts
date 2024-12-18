@@ -15,6 +15,14 @@ export async function POST(request: Request) {
 		const id = uuidValidtor.parse(
 			new URL(request.url).searchParams.get("id")
 		);
+
+		if (!templatePrompts && !prompt) {
+			return NextResponse.json(
+				{ error: "Prompt is required" },
+				{ status: 400 }
+			);
+		}
+
 		let conversation = await prisma.conversation.findUnique({
 			where: {
 				id: id,

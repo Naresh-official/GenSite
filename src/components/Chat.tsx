@@ -72,12 +72,17 @@ export function Chat() {
 					},
 				]);
 				await getTemplate();
+				const newMessages = await getAllMessages();
+				setMessages(newMessages);
+				scrollToBottom();
 			} else {
 				const { data } = await axios.post("/api/template", {
 					message: fetchedMessages[2].content,
 				});
 				const newFileTree = parseFiles(data?.filePrompts[0], fileTree);
 				dispatch(setFiles(newFileTree));
+				setMessages(fetchedMessages);
+				scrollToBottom();
 			}
 		};
 
@@ -103,7 +108,6 @@ export function Chat() {
 			]);
 			const newFileTree = parseFiles(data?.filePrompts[0], fileTree);
 			dispatch(setFiles(newFileTree));
-			getAllMessages();
 		} catch (error: unknown) {
 			handleError(error);
 		} finally {
@@ -114,7 +118,6 @@ export function Chat() {
 	const getAllMessages = async () => {
 		try {
 			const { data } = await axios.get(`/api/conversation?id=${chatId}`);
-			setMessages(data?.messages);
 			return data?.messages || [];
 		} catch (error: unknown) {
 			handleError(error);
