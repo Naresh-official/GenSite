@@ -35,7 +35,7 @@ function ChatInput({
 		event.preventDefault();
 		setLoading(true);
 		try {
-			if (inputPrompt === "" || !inputPrompt || loading) {
+			if (inputPrompt === "" || !inputPrompt) {
 				throw new Error("Please enter a message");
 			}
 			setMessages((messages) => [
@@ -50,9 +50,6 @@ function ChatInput({
 			scrollToBottom();
 			const { data } = await axios.post(`/api/chat?id=${chatId}`, {
 				prompt: inputPrompt,
-			});
-			navigator.clipboard.writeText(data as string).then(() => {
-				console.log("Copied to clipboard");
 			});
 			setMessages((messages) => [
 				...messages,

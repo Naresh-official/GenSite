@@ -3,8 +3,8 @@ import { parseFiles } from "@/lib/parse/parseFiles";
 import { parseGenSiteArtifact } from "@/lib/parse/parseGenSiteXML";
 import { setFiles } from "@/store/features/filesSlice";
 import { IStep } from "@/types";
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 function Message({
 	message,
@@ -17,10 +17,14 @@ function Message({
 	};
 }) {
 	const dispatch = useDispatch();
+	const fileTree = useSelector((state: any) => state.files.files);
 	const steps: IStep[] = parseGenSiteArtifact(message.content);
+	const didRun = useRef(false);
 	useEffect(() => {
+		if (didRun.current) return;
+		didRun.current = true;
 		if (message.role === "MODEL") {
-			const files = parseFiles(message.content);
+			const files = parseFiles(message.content, [...fileTree]);
 			dispatch(setFiles(files));
 		}
 	}, [message, dispatch]);

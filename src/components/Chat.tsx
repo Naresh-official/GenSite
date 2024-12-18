@@ -6,19 +6,21 @@ import {
 	ResizablePanel,
 	ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ChatInput from "./ChatInput";
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { handleError } from "@/lib/ErrorHandler";
 import MessageContainer from "./MessageContainer";
 import EditorContainer from "./EditorContainer";
+import { parseFiles } from "@/lib/parse/parseFiles";
+import { setFiles } from "@/store/features/filesSlice";
 
 export function Chat() {
 	const { chatId } = useParams();
-
+	const dispatch = useDispatch();
+	const fileTree = useSelector((state: any) => state.files.files);
 	const inputMessage = useSelector((state: any) => state.input.value);
-	const [filePrompts, setFilePrompts] = useState<string[]>([]);
 	const [loading, setLoading] = useState<boolean>(false);
 	const [messages, setMessages] = useState<
 		{
@@ -70,6 +72,12 @@ export function Chat() {
 					},
 				]);
 				await getTemplate();
+			} else {
+				const { data } = await axios.post("/api/template", {
+					message: fetchedMessages[2].content,
+				});
+				const newFileTree = parseFiles(data?.filePrompts[0], fileTree);
+				dispatch(setFiles(newFileTree));
 			}
 		};
 
@@ -93,8 +101,9 @@ export function Chat() {
 					prompt: inputMessage,
 				}),
 			]);
+			const newFileTree = parseFiles(data?.filePrompts[0], fileTree);
+			dispatch(setFiles(newFileTree));
 			getAllMessages();
-			setFilePrompts(data.filePrompts);
 		} catch (error: unknown) {
 			handleError(error);
 		} finally {
